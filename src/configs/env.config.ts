@@ -7,6 +7,6 @@ export const env = {
   app: {
     name: 'example-api',
     host: process.env.APP_HOST || 'http://localhost',
-    port: process.env.APP_PORT || '4000',
+    port: process.env.APP_PORT || '3000',
   },
 };
