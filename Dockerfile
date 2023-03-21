@@ -1,5 +1,5 @@
 # Base image
-FROM node:18.15-alpine
+FROM node:18.15-alpine as base-node
 
 # Set working directory
 WORKDIR /app
@@ -16,11 +16,16 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Set environment variable to production
-ENV NODE_ENV=production
+#---------------------------------------------------------------------------------------
+# DEVELOPMENT image
+#---------------------------------------------------------------------------------------
+FROM base-node AS development
 
-# Expose port 3000
-EXPOSE 3000
+# Set environment variable to development
+ENV NODE_ENV=development
+
+# Expose port 3050
+EXPOSE 3050
 
 # Run application.
 ENTRYPOINT ["npm","run"]

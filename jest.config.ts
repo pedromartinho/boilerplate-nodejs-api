@@ -8,7 +8,9 @@ const config: Config = {
   ],
   testTimeout: 10000,
   preset: 'ts-jest',
+  globalSetup: `./src/api/tests/globalSetup.ts`,
   setupFilesAfterEnv: [
+    `./src/api/tests/jest.setup.ts`,
     "./src/api/tests/testsSetup.ts"
   ],
 };

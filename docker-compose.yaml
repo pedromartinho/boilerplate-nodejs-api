@@ -1,0 +1,33 @@
+version: '3.7'
+services:
+    api:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+            target: development
+        image: example-api
+        ports:
+            - "${DOCKER_COMPOSE_API_PORT}:3050"
+        volumes:
+            - .:/app
+        links:
+            - database
+        entrypoint: npm run docker-compose:init
+    database:
+        image: postgres:14.3
+        environment:
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_DB=${DB_DATABASE}
+            - POSTGRES_USER=${DB_USERNAME}
+        ports:
+            - "${DOCKER_COMPOSE_DB_PORT}:5432"
+        volumes:
+          - ./database/data:/var/lib/postgresql/data
+    test-db:
+        image: postgres:14.3
+        environment:
+            - POSTGRES_PASSWORD=${DOCKER_COMPOSE_DB_TEST_PASSWORD}
+            - POSTGRES_DB=${DOCKER_COMPOSE_DB_TEST_DATABASE}
+            - POSTGRES_USER=${DOCKER_COMPOSE_DB_TEST_USERNAME}
+        ports:
+            - "${DOCKER_COMPOSE_DB_TEST_PORT}:5432"

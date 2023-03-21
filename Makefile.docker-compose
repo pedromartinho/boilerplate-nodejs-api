@@ -46,8 +46,8 @@ lint:   ## Check linter issues
 lint-fix:   ## Apply linter fixes
 	@docker-compose exec api npm run lint:fix
 
-.PHONY: build
-build:  ## Build local Docker image
+.PHONY: local-build
+local-build:  ## Build local Docker image
 	@docker-compose build
 
 .PHONY: local-run

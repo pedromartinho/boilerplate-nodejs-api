@@ -35,44 +35,33 @@ endif
 # Tasks
 #-----------------------------------------------------------------
 help:
-	@echo "$(BOLD)$(GREEN)Example API"
+	@echo "Help"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' Makefile | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
-.PHONY: lint
-lint:   ## Check linter issues
-	@docker-compose exec api npm run lint
-
-.PHONY: lint-fix
-lint-fix:   ## Apply linter fixes
-	@docker-compose exec api npm run lint:fix
 
 .PHONY: build
 build:  ## Build local Docker image
-	@docker-compose build
+	@docker build . -t example-api$(BUILD_TAG)
 
 .PHONY: local-run
 local-run:  ## Run local Docker image
-	@docker-compose up -d
-
-.PHONY: local-migrate-generate
-local-migrate-generate:  ## Generate migrations from models
-	@docker-compose exec api npm run migrate:generate -- src/database/migrations/"$(name)"
-
-.PHONY: local-migrate-run
-local-migrate-run:  ## Run local pending migrations
-	@docker-compose exec api npm run migrate:run
+	@docker run -p 3050:3050 -v $(shell pwd)/src:/app/src --rm --name example-api example-api$(BUILD_TAG) "start"
 
 .PHONY: test
 test:  ## Run tests
-	@docker-compose exec api npm run test "-t" "$(MATCH_TEST_PATH)"
+	@docker run -v $(shell pwd)/src:/app/src --rm --name example-api example-api$(BUILD_TAG) "test"  "-t" "$(MATCH_TEST_PATH)"
+
+.PHONY: lint
+lint:   ## Apply linter
+	@docker run -v $(shell pwd)/src:/app/src --rm --name example-api example-api$(BUILD_TAG) "lint"
+
+.PHONY: lint-fix
+lint-fix:   ## Apply linter fix
+	@docker run -v $(shell pwd)/src:/app/src --rm --name example-api example-api$(BUILD_TAG) "lint:fix"
 
 .PHONY: clean
 clean:  ## Clean all the environment
-	@docker-compose down --rmi "all"
-
-.PHONY: stop
-stop:  ## Stop running container
-	@docker-compose down
+	@docker rm -f 'example-api'
+	@docker rmi $$(docker images 'example-api' -a -q)
 
 # Default command to help
 .DEFAULT_GOAL := help

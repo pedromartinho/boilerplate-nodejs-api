@@ -29,6 +29,8 @@ export default class ExampleController {
   private static async dummy(req: Request, res: Response): Promise<Response> {
     const {echo} = req.query;
 
-    return res.json(ExampleService.echo(echo as string || '')).status(200);
+    const echoEntity = await ExampleService.echo(echo as string || '');
+
+    return res.json({echo: echoEntity}).status(200);
   }
 }
